@@ -26,9 +26,4 @@ export class AuthorResolver {
     async deleteAuthor(@Args('id') id: string): Promise<AuthorInput> {
         return this.authorService.delete(id);
     }
-
-    @Query(() => String)
-    async hello() {
-        return 'hello';
-    }
 }

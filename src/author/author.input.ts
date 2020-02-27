@@ -2,8 +2,6 @@ import { InputType, Field, Int, ID } from 'type-graphql';
 
 @InputType()
 export class AuthorInput {
-    @Field(() => ID)
-    readonly id?: string;
     @Field()
     readonly name: string;
     @Field(() => Int)
