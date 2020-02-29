@@ -5,4 +5,5 @@ export interface Author extends Document {
     readonly age: number,
     readonly email: string,
     readonly description: string,
+    readonly password: string,
 }

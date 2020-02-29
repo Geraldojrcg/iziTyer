@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import * as mongoose from 'mongoose';
 import { AuthorType } from './author.dto';
 import { Author } from './author.interface';
 import { AuthorInput } from './author.input';
+import { AuthorNotFoundException } from './author.exception';
+import { MongoObjectIdException } from 'src/app.exception';
 
 @Injectable()
 export class AuthorService {
-    constructor(@InjectModel('Author') private authorModel: Model<Author>) {}
+    constructor(@InjectModel('Author') private authorModel: mongoose.Model<Author>) { }
 
     async create(createAuthor: AuthorInput): Promise<AuthorType> {
+        const authors = await this.findAll();
+        if (authors.some(author => author.email === createAuthor.email)) {
+            throw new Error("Email already in use");
+        }
         return await this.authorModel.create(createAuthor);
     }
 
@@ -18,7 +24,22 @@ export class AuthorService {
     }
 
     async findOne(id: string): Promise<AuthorType> {
-        return await this.authorModel.findOne({ _id: id });
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new MongoObjectIdException();
+        }
+        const author: AuthorType = await this.authorModel.findOne({ _id: id });
+        if (!author) {
+            throw new AuthorNotFoundException();
+        }
+        return author;
+    }
+
+    async findByEmail(email: string): Promise<AuthorType> {
+        const author: AuthorType = await this.authorModel.findOne({ email });
+        if (!author) {
+            throw new AuthorNotFoundException();
+        }
+        return author;
     }
 
     async delete(id: string): Promise<AuthorType> {
@@ -26,6 +47,13 @@ export class AuthorService {
     }
 
     async update(id: string, author: Author): Promise<AuthorType> {
-        return await this.authorModel.findByIdAndUpdate(id, author, { new: true });
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new MongoObjectIdException();
+        }
+        const authorRes: AuthorType = await this.authorModel.findByIdAndUpdate(id, author, { new: true });
+        if (!authorRes) {
+            throw new AuthorNotFoundException;
+        }
+        return authorRes;
     }
 }

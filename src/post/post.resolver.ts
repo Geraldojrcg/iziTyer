@@ -1,7 +1,9 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { PostService } from './post.service';
-import { PostType } from './post.dto';
-import { PostInput } from './post.input';
+import { PostType, PostTypeEmbedded } from './post.dto';
+import { PostInput, UpvotePostInput } from './post.input';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth.guard';
 
 @Resolver('Post')
 export class PostResolver {
@@ -9,21 +11,39 @@ export class PostResolver {
 
     @Query(() => [PostType])
     async posts(): Promise<PostType[]> {
-        return this.postService.findAll();
+        return await this.postService.findAll();
     }
 
-    @Mutation(() => PostType)
+    @Query(() => PostType)
+    async postById(@Args('id') id: string): Promise<PostType> {
+        return await this.postService.findOne(id);
+    }
+
+    @Query(() => [PostType])
+    async postsByAuthor(@Args('authorId') authorId: string): Promise<PostType[]> {
+        return await this.postService.findPostsByAuthor(authorId);
+    }
+
+    @UseGuards(AuthGuard)
+    @Mutation(() => PostTypeEmbedded)
     async createPost(@Args('input') input: PostInput): Promise<PostType> {
-        return this.postService.create(input);
+        return await this.postService.create(input);
     }
 
+    @UseGuards(AuthGuard)
     @Mutation(() => PostType)
     async updatePost(@Args('id') id: string, @Args('input') input: PostInput): Promise<PostType> {
-        return this.postService.update(id, input);
+        return await this.postService.update(id, input);
     }
 
     @Mutation(() => PostType)
+    async upvotePostById(@Args('input') input: UpvotePostInput): Promise<PostType> {
+        return await this.postService.upvoteById(input.postId);
+    }
+
+    @UseGuards(AuthGuard)
+    @Mutation(() => PostType)
     async deletePost(@Args('id') id: string): Promise<PostType> {
-        return this.postService.delete(id);
+        return await this.postService.delete(id);
     }
 }

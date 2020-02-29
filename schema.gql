@@ -3,11 +3,17 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input AuthInput {
+  email: String!
+  password: String!
+}
+
 input AuthorInput {
   name: String!
   age: Int!
   email: String!
   description: String!
+  password: String!
 }
 
 type AuthorType {
@@ -16,15 +22,23 @@ type AuthorType {
   age: Int!
   email: String!
   description: String!
+  password: String!
+}
+
+type AuthType {
+  token: String!
+  author: AuthorType!
 }
 
 type Mutation {
-  createPost(input: PostInput!): PostType!
+  createPost(input: PostInput!): PostTypeEmbedded!
   updatePost(input: PostInput!, id: String!): PostType!
+  upvotePostById(input: UpvotePostInput!): PostType!
   deletePost(id: String!): PostType!
   createAuthor(input: AuthorInput!): AuthorType!
   updateAuthor(input: AuthorInput!, id: String!): AuthorType!
   deleteAuthor(id: String!): AuthorType!
+  login(input: AuthInput!): AuthType!
 }
 
 input PostInput {
@@ -40,7 +54,22 @@ type PostType {
   description: String!
 }
 
+type PostTypeEmbedded {
+  id: ID!
+  author: String!
+  likes: Int!
+  description: String!
+}
+
 type Query {
   posts: [PostType!]!
+  postById(id: String!): PostType!
+  postsByAuthor(authorId: String!): [PostType!]!
   authors: [AuthorType!]!
+  author(authorId: String!): AuthorType!
+  authorById(id: String!): AuthorType!
+}
+
+input UpvotePostInput {
+  postId: String!
 }

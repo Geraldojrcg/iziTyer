@@ -9,3 +9,8 @@ export class PostInput {
     @Field()
     readonly description: string;
 }
+
+@InputType()
+export class UpvotePostInput {
+  @Field() postId: string;
+}

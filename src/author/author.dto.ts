@@ -12,4 +12,6 @@ export class AuthorType {
     readonly email: string;
     @Field()
     readonly description: string;
+    @Field()
+    readonly password: string;
 }

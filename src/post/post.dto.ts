@@ -12,3 +12,15 @@ export class PostType {
     @Field()
     readonly description: string;
 }
+
+@ObjectType()
+export class PostTypeEmbedded {
+    @Field(() => ID)
+    readonly id?: string;
+    @Field()
+    readonly author: string;
+    @Field(() => Int)
+    readonly likes: number;
+    @Field()
+    readonly description: string;
+}
