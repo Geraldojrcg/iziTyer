@@ -1,5 +1,5 @@
 # Project
-This project consists of a simple example of how to use GraphQL + MongoDb in Nest.js. In addition, the project provides examples of how to make customizable exception handling and a simple authentication method using JWT.
+This project consists of a simple blog example showing how to use GraphQL + MongoDb in Nest.js. In addition, the project provides examples of how to make customizable exception handling and a simple authentication method using JWT.
 
 ## Prerequisites
 - MongoDb
